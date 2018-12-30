@@ -1,0 +1,138 @@
+<!-- Required Stylesheets -->
+<link type="text/css" rel="stylesheet" href="bootstrap.min.css"/>
+<link type="text/css" rel="stylesheet" href="bootstrap-vue.css"/>
+
+<!-- Required scripts -->
+<script src="vue.js"></script>
+<!--<script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>-->
+<script src="bootstrap-vue.min.js"></script>
+<style>
+    .app{
+        margin-top: 2em;
+    }
+    .card{
+        height: 22em;
+        background-color: gainsboro;
+    }
+    .card img{
+        height: 12em;
+    }
+    .card-title{
+        color: darkblue;
+        text-transform: capitalize;
+        text-decoration: underline;
+    }
+</style>
+
+
+<section class="app">
+    <div class="container">
+        <div class="row ">
+            <div class="col-9">
+                <b-button  variant="primary"  @click="type='all'" >all</b-button>
+                <b-button  variant="danger" @click="type='fruit'" >Fruit</b-button>
+                <b-button  variant="success" @click="type='vegetable'" >vegetable</b-button>
+            </div>
+            <div class="col-3">
+                <b-input type="text" v-model="search" placeholder="Search title.."  /></b-input>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <Pic v-for='samble in filteredList' :samble="samble">
+            </Pic>
+        </div>
+    </div>
+</section>
+
+
+<script type="text/javascript">
+    class samble {
+        constructor(title, category, img) {
+            this.title = title;
+            this.category = category;
+            this.img = img;
+        }
+    }
+
+   var filters={
+        'all':function(sambleList){
+           return sambleList;
+        },
+       'fruit':function(sambleList){
+           return sambleList.filter(function(samble){
+                return samble.category=='fruit'
+           });
+       },
+       'vegetable':function(sambleList){
+           return sambleList.filter(function(samble){
+               return samble.category=='vegetable'
+           });
+       }
+   }
+
+    Vue.component('Pic',{
+        template:`<div class="col-3">
+                    <div class="card " >
+                  <img :src="samble.img" class="card-img-top" :alt="samble.title">
+                      <div class="card-body">
+                          <h5 class="card-title">{{samble.title}}</h5>
+                         <p class="card-text">{{samble.category}}</p>
+                      </div>
+                 </div>
+              </div>`,
+        props:{
+            'samble':{}
+        },
+    })
+
+    new Vue({
+        'el': '.app',
+        data: {
+            search: '',
+            type:'all',
+            sambleList : [
+                new samble(
+                    'banana',
+                    'fruit',
+                    'https://i5.walmartimages.ca/images/Large/580/6_r/875806_R.jpg'
+                ),
+                new samble(
+                    'orange',
+                    'fruit',
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6fY_qLOzz2eEint4SLliqxiqpKdLiyl1CJq094LUhVoSBFBdu'
+                ),
+                new samble(
+                    'tomato',
+                    'vegetable',
+                    'https://www.aswaaqonline.ae/content/images/thumbs/009/0098512_tomato-500g_550.jpeg'
+                ),
+                new samble(
+                    'Potato',
+                    'vegetable',
+                    'https://img.tesco.com/Groceries/pi/000/0262410000000/IDShot_540x540.jpg'
+                ),
+                new samble(
+                    'banana',
+                    'vegetable',
+                    ''
+                ),
+            ]
+        },
+        computed:{
+            filteredList() {
+             var sambleSearch=  filters[this.type](this.sambleList);
+                if(this.search!=''){
+                    return sambleSearch.filter(samble => {
+                        return samble.title.toLowerCase().startsWith(this.search)
+                    })
+                }
+                else {
+                    return sambleSearch
+                    }
+                }
+        }
+    });
+
+
+</script>
